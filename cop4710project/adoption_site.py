@@ -190,6 +190,32 @@ def add_game():
 
     return render_template('add.html', form=form)
 
+@app.route('/search_engine', methods=['GET', 'POST'])
+def search_game():
+    search = gameSearchForm(request.form)
+    if request.method == 'POST':
+        return search_results(search)
+
+    if search.validate_on_submit():
+        return redirect(url_for('search_engine'))
+
+    return render_template('search.html', form=search)
+
+@app.route('/results')
+def search_results(search):
+    results = []
+    search_string = search.data['search']
+
+    if search.data['search'] == '':
+        qry = db.session.query(VideoGame)
+        results = qry.all()
+
+    if not results:
+        flash('No results found!')
+        return redirect('/search_engine')
+    else:
+        # display results
+        return render_template('results.html', results=results)
 
 @app.route('/list')
 def list_game():
