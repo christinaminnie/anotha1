@@ -1,24 +1,21 @@
 import os
 
-# import sys
-
 from forms import AddForm, DelForm, AddRatingForm
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
-from flask import Flask, render_template, url_for, redirect
+from flask import Flask,render_template,url_for,redirect
 
-# sys.path.append(os.path.join(os.path.dirname('output.txt'), '..'))
+
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'mysecretkey'
+app.config['SECRET_KEY'] = 'mysecretkey';
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'data.sqlite')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
-Migrate(app, db)
-
+Migrate(app,db)
 
 class VideoGame(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -46,51 +43,6 @@ class VideoGame(db.Model):
     def __repr__(self):
         return f"GAME: {self.name}\nDescription: {self.description}\nRelease Date: {self.release_date}\nCompatible " \
                f"With: {self.compatibility}\nPrice: {self.price}\nCompany_ID: {self.company_id}\n"
-
-
-class Genre(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.Text)
-
-    def __init__(self, name):
-        self.name = name
-
-    def __repr__(self):
-        return f"GENRE ......."
-
-
-class Platform(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.Text)
-    platform_device = db.Column(db.Text)
-    version = db.Column(db.Integer)
-    manufacturer = db.Column(db.Text)
-
-    def __init__(self, name, platform_device, version, manufacturer):
-        self.name = name
-        self.platform_device = platform_device
-        self.version = version
-        self.manufacturer = manufacturer
-
-    def __repr__(self):
-        return f"Platform ... "
-
-
-class Company(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.Text)
-    location = db.Column(db.Text)
-    revenue = db.Column(db.Text)
-
-    def __init__(self, name, location, revenue):
-        self.name = name
-        self.location = location
-        self.revenue = revenue
-
-    def __repr__(self):
-        return f"name = {self.name}, location = {self.location}, revenue = {self.revenue}"
-
-
 class Rating(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     numeric_rating = db.Column(db.Integer)
@@ -118,26 +70,93 @@ video_game_platform = db.Table('video_game_platform',
                                db.Column('platform_id', db.Integer, db.ForeignKey('platform.id'))
                                )
 
-##############
+
+
+class Genre(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.Text)
+
+    def __init__(self, name):
+        self.name = name
+
+    def __repr__(self):
+        return f"GENRE ......."
+
+class Platform(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.Text)
+    platform_device = db.Column(db.Text)
+    version = db.Column(db.Integer)
+    manufacturer = db.Column(db.Text)
+
+    def __init__(self, name, platform_device, version, manufacturer):
+        self.name = name
+        self.platform_device = platform_device
+        self.version = version
+        self.manufacturer = manufacturer
+
+    def __repr__(self):
+        return f"Platform ... "
+
+class Company(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.Text)
+    location = db.Column(db.Text)
+    revenue = db.Column(db.Text)
+
+    def __init__(self, name, location, revenue):
+        self.name = name
+        self.location = location
+        self.revenue = revenue
+
+    def __repr__(self):
+        return f"name = {self.name}, location = {self.location}, revenue = {self.revenue}"
+
+
+
+
 
 with app.app_context():
     db.create_all()
 
-    with open(r'C:\Users\nguye\FlaskStuff\cop4710project\output.txt', 'r') as file:
+    with open('output.txt', 'r') as file:
         lines = file.readlines()
 
-    # iterate over the lines in groups of 3
     for i in range(0, len(lines), 3):
-        name = lines[i].strip()
-        release_date = lines[i + 1].strip()
-        price = lines[i + 2].strip()
+        if i + 2 < len(lines):
+            name = lines[i].strip()
+            release_date = lines[i + 1].strip()
+            price = lines[i + 2].strip()
 
-        game = VideoGame(name=name, description=None, release_date=release_date, compatibility=None, price=price,
-                         company_id=None)
-        db.session.add(game)
-        # print(f'GAME: {game.name}\nRelease Date: {game.release_date}\nPrice: {game.price}')
+            # Check if a video game with the same name already exists in the database
+            existing_game = VideoGame.query.filter_by(name=name).first()
+            if not existing_game:
+                # If not, add the new game to the database
+                game = VideoGame(name=name, release_date=release_date, price=price,description=None,compatibility=None,company_id=None)
+                db.session.add(game)
 
     db.session.commit()
+
+    nickie = gam
+
+
+
+
+
+
+# gta = VideoGame('GTA', 'shooting game', '3/30/2001', 'Xbox', '6000')
+    #rating1 = Rating(5, 'is amazing', 500)
+
+   # db.session.add(rating1)
+   # db.session.add(gta)
+
+
+    #db.session.commit()
+
+   # print(gta)
+  #  print(rating1)
+
+##############
 
 
 ############################################
@@ -161,10 +180,9 @@ def add_game():
         release_date = form.release_date.data
         compatibility = form.compatibility.data
         price = form.price.data
-        company_id = form.company_id.data
 
-        # Add new video game to database
-        new_game = VideoGame(name, description, release_date, compatibility, price, company_id)
+        # Add new videogame to database
+        new_game = VideoGame(name, description, release_date, compatibility, price)
         db.session.add(new_game)
         db.session.commit()
 
@@ -187,7 +205,6 @@ def del_game():
     if form.validate_on_submit():
         id = form.id.data
         game = VideoGame.query.get(id)
-        # TODO fix delete?
         db.session.delete(game)
         db.session.commit()
 
@@ -195,17 +212,16 @@ def del_game():
     return render_template('delete.html', form=form)
 
 
-@app.route('/add_rating', methods=['GET', 'POST'])
+@app.route('/addrating', methods=['GET', 'POST'])
 def add_rating():
     form = AddRatingForm()
 
     if form.validate_on_submit():
-        numeric_rating = form.numeric_rating.data
-        verbal_rating = form.verbal_rating.data
-        video_game_id = form.video_game_id.data
+        numericRating = form.numericRating.data
+        verbalRating = form.verbalRating.data
 
         # Add new rating to database
-        new_rating = Rating(numeric_rating, verbal_rating, video_game_id)
+        new_rating = Rating(numericRating, verbalRating, game_id=None)
         db.session.add(new_rating)
         db.session.commit()
 
@@ -214,11 +230,13 @@ def add_rating():
     return render_template('rating.html', form=form)
 
 
-@app.route('/list_ratings')
+@app.route('/listratings')
 def list_ratings():
     ratings = Rating.query.all()
     return render_template('ratinglist.html', ratings=ratings)
 
 
+
 if __name__ == '__main__':
     app.run(debug=True)
+
