@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% from "_formhelpers.html" import render_field %}
+{% block content %}
+<div class="jumbotron">
+  <h1>Search for a specific game here!</h1>
+  <p>Fill out the form with the appropriate answers.</p>
+  <form method="post">
+  <dl>
+    {{ render_field(form.select) }}
+    <p>
+    {{ render_field(form.search) }}
+  </p></dl>
+  <p><input type="submit" value="Search">
+</p></form>
+</div>
+{% endblock %}
