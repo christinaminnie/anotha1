@@ -25,3 +25,9 @@ class AddRatingForm(FlaskForm):
     verbal_rating = StringField('Verbal Rating', validators=[InputRequired()],
                                 render_kw={"placeholder": "Enter verbal rating"})
     submit = SubmitField('Add Rating')
+
+class gameSearchForm(FlaskForm):
+    choices = [('ID', 'ID'), ('Name', 'Name'), ('Release Date', 'ReleaseDate'), ('Price', 'Price')]
+    select = SelectField('Search for Video Game:', choices=choices)
+    search = StringField('')
+    submit = SubmitField('')
