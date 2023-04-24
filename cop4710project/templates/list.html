@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="jumbotron">
+  <h1>Here is a list of all video games:</h1>
+  <table class="table table-striped">
+  <thead>
+      <tr>
+        <th>ID</th>
+        <th>GAME</th>
+        <th>DESCRIPTION</th>
+        <th>RELEASE DATE</th>
+        <th>COMPATIBILITY</th>
+        <th>PRICE</th>
+        <th>COMPANY ID</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for game in videogames %}
+      <tr>
+        <td>{{ game.id }}</td>
+        <td>{{ game.name }}</td>
+        <td>{{ game.description }}</td>
+        <td>{{ game.release_date }}</td>
+        <td>{{ game.compatibility }}</td>
+        <td>{{ game.price }}</td>
+        <td>{{ game.company_id }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
